@@ -14,12 +14,7 @@ export default function HeaderGuest() {
           <Link href="/signup" className="nav-link">Sign Up</Link>
         </nav>
 
-        <div className="site-user">
-          <nav className="site-nav">
-            <Link href="/signin" className="nav-link">Sign In</Link>
-            <Link href="/signup" className="nav-link">Sign Up</Link>
-          </nav>
-        </div>
+        <div className="site-user" />
 
         <MobileMenu authenticated={false} />
       </div>
