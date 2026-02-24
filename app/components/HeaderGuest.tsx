@@ -9,14 +9,16 @@ export default function HeaderGuest() {
           <Link href="/" className="brand-link">Capsule</Link>
         </div>
 
-        <nav className="site-nav desktop-nav">
-          <Link href="/signin" className="nav-link">Sign In</Link>
-          <Link href="/signup" className="nav-link">Sign Up</Link>
-        </nav>
+        <div className="header-right">
+          <nav className="site-nav desktop-nav">
+            <Link href="/signin" className="nav-link">Sign In</Link>
+            <Link href="/signup" className="nav-link">Sign Up</Link>
+          </nav>
 
-        <div className="site-user" />
+          <div className="site-user" />
 
-        <MobileMenu authenticated={false} />
+          <MobileMenu authenticated={false} />
+        </div>
       </div>
     </header>
   );

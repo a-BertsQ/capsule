@@ -8,6 +8,15 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: rootDir,
   },
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "www.gravatar.com",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

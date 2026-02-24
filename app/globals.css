@@ -135,7 +135,7 @@ select {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding-block: 0.6rem;
+  padding-block: 0.45rem;
 }
 
 .user-avatar {
@@ -180,6 +180,83 @@ select {
   font-weight: 700;
   color: var(--primary);
   font-size: 1.05rem;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Avatar menu styles */
+.avatar-menu-root {
+  position: relative;
+}
+
+.avatar-button {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 4px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.avatar-button .user-avatar,
+.avatar-button img {
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.avatar-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  border-radius: 0.6rem;
+  min-width: 180px;
+  overflow: hidden;
+  z-index: 60;
+}
+
+.avatar-menu .menu-header {
+  padding: 0.75rem;
+}
+
+.avatar-menu .menu-name {
+  font-weight: 700;
+}
+
+.avatar-menu .menu-email {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.avatar-menu hr {
+  margin: 0;
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+.avatar-menu .menu-item {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.avatar-menu .menu-item:hover {
+  background: var(--surface-soft);
 }
 
 .site-nav {
