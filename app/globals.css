@@ -138,6 +138,24 @@ select {
   padding-block: 0.6rem;
 }
 
+.user-avatar {
+  border-radius: 999px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  width: 36px;
+  height: 36px;
+}
+
+.user-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-row form {
+  margin-left: 0.25rem;
+}
+
 .brand-link {
   font-weight: 700;
   color: var(--primary);
