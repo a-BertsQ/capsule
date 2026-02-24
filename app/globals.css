@@ -156,6 +156,19 @@ select {
   margin-left: 0.25rem;
 }
 
+.site-user {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.user-name {
+  display: inline-block;
+  white-space: nowrap;
+  margin-left: 0.25rem;
+  color: var(--muted);
+}
+
 .brand-link {
   font-weight: 700;
   color: var(--primary);
