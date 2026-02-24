@@ -147,11 +147,18 @@ select {
 }
 
 .user-row {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-row .signout-form,
 .user-row form {
   margin-left: 0.25rem;
 }
