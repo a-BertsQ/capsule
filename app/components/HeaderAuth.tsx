@@ -1,8 +1,7 @@
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { MobileMenu } from "./menu-mobile";
 import AvatarMenu from "./AvatarMenu";
-import { signOutAction } from "@/app/signin/actions";
 import crypto from "crypto";
 
 function gravatarUrl(email?: string, size = 40) {
@@ -16,7 +15,16 @@ export default function HeaderAuth({ user }: { user: { name?: string | null; ema
     <header className="site-header">
       <div className="page-wrap header-inner">
         <div className="brand">
-          <Link href="/" className="brand-link">Capsule</Link>
+          <Link href="/" className="brand-link" aria-label="Capsule home">
+            <Image
+              src="/logo/logo capsule.png"
+              alt="Capsule"
+              width={52}
+              height={52}
+              className="brand-logo"
+              priority
+            />
+          </Link>
         </div>
 
         <div className="header-right">
@@ -28,7 +36,7 @@ export default function HeaderAuth({ user }: { user: { name?: string | null; ema
           </nav>
 
           <div className="site-user">
-            <AvatarMenu user={{ name: user.name ?? undefined, email: user.email ?? undefined, avatar: gravatarUrl(user.email, 40) }} />
+            <AvatarMenu user={{ name: user.name ?? undefined, email: user.email ?? undefined, avatar: gravatarUrl(user.email ?? undefined, 40) }} />
           </div>
 
           <MobileMenu authenticated={true} />

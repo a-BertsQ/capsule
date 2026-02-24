@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { useActionState } from "react";
 import { signUpAction } from "./actions";
@@ -20,6 +21,31 @@ export function SignUpForm() {
   const [state, action, pending] = useActionState(signUpAction, initial);
   const [clientError, setClientError] = useState("");
   const [strength, setStrength] = useState(0);
+
+  if (pending) {
+    return (
+      <div className="section-card" style={{ minHeight: "400px", display: "grid", placeItems: "center" }}>
+        <div className="loading-stack">
+          <Image
+            src="/mascot/mascot capsule.webp"
+            alt="Capsule mascot"
+            width={120}
+            height={120}
+            className="loading-mascot"
+            priority
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+          />
+          <div className="loading-text">Mendaftar ke Capsule...</div>
+          <div className="loading-dots" aria-hidden="true">
+            <span className="loading-dot" />
+            <span className="loading-dot" />
+            <span className="loading-dot" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form

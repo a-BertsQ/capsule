@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
 
 export default function AvatarMenu({ user }: { user: { name?: string | null; email?: string | null; avatar?: string } }) {
   const [open, setOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -17,8 +19,34 @@ export default function AvatarMenu({ user }: { user: { name?: string | null; ema
   }, []);
 
   async function handleSignOut() {
+    setSigningOut(true);
     await fetch('/api/signout', { method: 'POST' });
+    // Add small delay to show loading screen
+    await new Promise(resolve => setTimeout(resolve, 1500));
     window.location.href = '/signin';
+  }
+
+  if (signingOut) {
+    return (
+      <div className="signout-overlay">
+        <div className="loading-stack">
+          <Image
+            src="/mascot/mascot capsule.webp"
+            alt="Capsule mascot"
+            width={140}
+            height={140}
+            className="loading-mascot"
+            priority
+          />
+          <div className="loading-text">Keluar dari Capsule...</div>
+          <div className="loading-dots" aria-hidden="true">
+            <span className="loading-dot" />
+            <span className="loading-dot" />
+            <span className="loading-dot" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -38,7 +66,12 @@ export default function AvatarMenu({ user }: { user: { name?: string | null; ema
             <div className="menu-email">{user.email}</div>
           </div>
           <hr />
-          <button className="menu-item" onClick={handleSignOut}>Sign out</button>
+          <Link href="/profile" className="menu-item">
+            Profil
+          </Link>
+          <button className="menu-item" onClick={handleSignOut}>
+            Sign out
+          </button>
         </div>
       )}
     </div>

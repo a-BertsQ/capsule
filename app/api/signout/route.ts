@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   if (token) {
     try {
       await prisma.session.deleteMany({ where: { sessionToken: token } });
-    } catch (e) {
+    } catch {
       // ignore
     }
   }

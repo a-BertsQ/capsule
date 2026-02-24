@@ -8,24 +8,29 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  name          String?
-  password      String?   // hashed password
-  role          String    @default("student")
-  emailVerified DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  sessions      Session[]
-  bookings      TutorBooking[]
+  id                String    @id @default(cuid())
+  email             String    @unique
+  name              String?
+  password          String?   // hashed password
+  role              String    @default("student")
+  isEmailVerified   Boolean   @default(false)
+  emailVerified     DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  sessions          Session[]
+  bookings          TutorBooking[]
+  verificationTokens VerificationToken[]
+  passwordResetTokens PasswordResetToken[]
 }
 
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String
   expires      DateTime
+  userAgent    String?  // Browser/device info for device limiting
+  createdAt    DateTime @default(now())
 }
 
 model Plan {
@@ -54,4 +59,31 @@ model TutorBooking {
   scheduledAt DateTime
   status     String   @default("pending")
   createdAt  DateTime @default(now())
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  type      String   // "email_verification" or "email_change"
+  newEmail  String?  // Store new email for email change verification
+  expires   DateTime
+  createdAt DateTime @default(now())
+  
+  @@index([token])
+  @@index([userId])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  expires   DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  
+  @@index([token])
+  @@index([userId])
 }

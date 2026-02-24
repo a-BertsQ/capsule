@@ -10,7 +10,11 @@ const MAX_ATTEMPTS = Number(process.env.SIGNIN_MAX_ATTEMPTS ?? 5);
 const WINDOW_MS = Number(process.env.SIGNIN_WINDOW_MS ?? 15 * 60 * 1000); // 15m
 const BLOCK_MS = Number(process.env.SIGNIN_BLOCK_MS ?? 15 * 60 * 1000); // 15m
 
-export function isBlocked(key: string) {
+export function isBlocked(
+  key: string,
+  maxAttempts: number = MAX_ATTEMPTS,
+  windowMs: number = WINDOW_MS
+) {
   const now = Date.now();
   const e = STORE.get(key);
   if (!e) return { blocked: false };
@@ -20,7 +24,12 @@ export function isBlocked(key: string) {
   return { blocked: false };
 }
 
-export function recordFailure(key: string) {
+export function recordFailure(
+  key: string,
+  maxAttempts: number = MAX_ATTEMPTS,
+  windowMs: number = WINDOW_MS,
+  blockMs: number = BLOCK_MS
+) {
   const now = Date.now();
   const e = STORE.get(key);
   if (!e) {
@@ -29,7 +38,7 @@ export function recordFailure(key: string) {
   }
 
   // reset window
-  if (now - e.firstAt > WINDOW_MS) {
+  if (now - e.firstAt > windowMs) {
     e.attempts = 1;
     e.firstAt = now;
     e.blockedUntil = undefined;
@@ -38,8 +47,8 @@ export function recordFailure(key: string) {
   }
 
   e.attempts += 1;
-  if (e.attempts >= MAX_ATTEMPTS) {
-    e.blockedUntil = now + BLOCK_MS;
+  if (e.attempts >= maxAttempts) {
+    e.blockedUntil = now + blockMs;
   }
   STORE.set(key, e);
 }

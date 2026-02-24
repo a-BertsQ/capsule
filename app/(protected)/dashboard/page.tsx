@@ -1,5 +1,8 @@
 import Link from "next/link";
 
+export const revalidate = 0; // Always revalidate
+export const dynamic = "force-dynamic"; // Force dynamic rendering
+
 const cards = [
   {
     title: "Belajar Interaktif",

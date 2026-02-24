@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
+import DrawingCanvas from "@/app/components/DrawingCanvas";
 
 const userFilters = [
   "Pre-Pharm Learner",
@@ -9,12 +10,43 @@ const userFilters = [
   "Pharm Seniors",
 ];
 
+const NOTES_STORAGE_KEY = "learn_page_notes";
+const AUTO_SAVE_INTERVAL = 5000; // Save notes every 5 seconds
+
 export default function LearnPage() {
   const [selectedFilter, setSelectedFilter] = useState(userFilters[0]);
-  const [notes, setNotes] = useState("");
-  const [isDrawing, setIsDrawing] = useState(false);
+  const [notes, setNotes] = useState(() => {
+    try {
+      return localStorage.getItem(NOTES_STORAGE_KEY) || "";
+    } catch (error) {
+      console.error("Failed to load notes:", error);
+      return "";
+    }
+  });
   const [privacyOn, setPrivacyOn] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Auto-save notes to localStorage
+  useEffect(() => {
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current);
+    }
+    autoSaveTimerRef.current = setTimeout(() => {
+      try {
+        if (notes) {
+          localStorage.setItem(NOTES_STORAGE_KEY, notes);
+        }
+      } catch (error) {
+        console.error("Failed to save notes:", error);
+      }
+    }, AUTO_SAVE_INTERVAL);
+
+    return () => {
+      if (autoSaveTimerRef.current) {
+        clearTimeout(autoSaveTimerRef.current);
+      }
+    };
+  }, [notes]);
 
   useEffect(() => {
     const onVisibility = () => setPrivacyOn(document.hidden);
@@ -34,45 +66,6 @@ export default function LearnPage() {
   const watermark = useMemo(() => {
     return `${selectedFilter} • ${new Date().toLocaleDateString("id-ID")}`;
   }, [selectedFilter]);
-
-  const point = (event: PointerEvent<HTMLCanvasElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
-  };
-
-  const onStartDraw = (event: PointerEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const cursor = point(event);
-    ctx.beginPath();
-    ctx.moveTo(cursor.x, cursor.y);
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    setIsDrawing(true);
-  };
-
-  const onMoveDraw = (event: PointerEvent<HTMLCanvasElement>) => {
-    if (!isDrawing) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const cursor = point(event);
-    ctx.lineTo(cursor.x, cursor.y);
-    ctx.stroke();
-  };
-
-  const onStopDraw = () => setIsDrawing(false);
-
-  const clearDraw = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  };
 
   return (
     <section className="app-grid page-section-fill">
@@ -109,30 +102,32 @@ export default function LearnPage() {
       <section className="section-card">
         <h2 className="section-title text-2xl">Worksheet Interaktif</h2>
         <div className="app-grid-2 mt-4">
-          <textarea
-            value={notes}
-            onChange={(event) => setNotes(event.target.value)}
-            className="field-textarea min-h-60"
-            placeholder="Tulis ringkasan materi di sini..."
-          />
-          <div className="media-frame relative p-2">
-            <canvas
-              ref={canvasRef}
-              width={600}
-              height={240}
-              onPointerDown={onStartDraw}
-              onPointerMove={onMoveDraw}
-              onPointerUp={onStopDraw}
-              onPointerLeave={onStopDraw}
-              className="w-full rounded-md border border-dashed border-border"
+          <div>
+            <h3 className="font-semibold mb-2">Catatan Teks</h3>
+            <textarea
+              value={notes}
+              onChange={(event) => setNotes(event.target.value)}
+              className="field-textarea min-h-96"
+              placeholder="Tulis ringkasan materi di sini..."
             />
-            <p className="watermark absolute left-4 top-4">{watermark}</p>
             <button
-              onClick={clearDraw}
+              onClick={() => {
+                const element = document.createElement("a");
+                element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(notes));
+                element.setAttribute("download", `catatan-${new Date().toISOString().split("T")[0]}.txt`);
+                element.style.display = "none";
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+              }}
               className="btn btn-secondary mt-3 w-full sm:w-auto"
             >
-              Clear Coretan
+              💾 Download Catatan
             </button>
+          </div>
+          <div>
+            <h3 className="font-semibold mb-2">Coretan & Gambar</h3>
+            <DrawingCanvas watermark={watermark} />
           </div>
         </div>
       </section>

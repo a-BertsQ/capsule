@@ -1,18 +1,22 @@
 "use server";
 
-import { randomUUID } from "node:crypto";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { AUTH_COOKIE } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sendEmail } from "@/lib/email";
+import { emailVerificationTemplate } from "@/lib/emailTemplates";
+import { createVerificationToken } from "@/lib/tokens";
 import bcrypt from "bcryptjs";
 
 export type SignUpState = { message: string };
+
+const MIN_LOADING_TIME = 3500; // 3,5 detik minimum loading
 
 export async function signUpAction(
   _prev: SignUpState,
   formData: FormData
 ): Promise<SignUpState> {
+  const startTime = Date.now();
+  
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
   const name = String(formData.get("name") ?? "").trim();
@@ -21,25 +25,61 @@ export async function signUpAction(
     return { message: "Email dan password wajib diisi." };
   }
 
+  if (!name) {
+    return { message: "Nama wajib diisi." };
+  }
+
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return { message: "Format email tidak valid." };
+  }
+
+  // Validate password strength
+  if (password.length < 8) {
+    return { message: "Password harus minimal 8 karakter." };
+  }
+
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) return { message: "Email sudah digunakan." };
 
   const hash = await bcrypt.hash(password, 10);
-  const user = await prisma.user.create({ data: { email, password: hash, name } });
-
-  const token = randomUUID();
-  const expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
-
-  await prisma.session.create({ data: { sessionToken: token, userId: user.id, expires } });
-
-  const store = await cookies();
-  store.set(AUTH_COOKIE, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    expires,
+  
+  // Create user with unverified email
+  const user = await prisma.user.create({
+    data: {
+      email,
+      password: hash,
+      name,
+    },
   });
 
-  redirect("/dashboard");
+  // Generate verification token
+  const token = await createVerificationToken(user.id);
+
+  // Send verification email
+  const baseUrl = process.env.BASE_URL || "http://localhost:3000";
+  const verificationLink = `${baseUrl}/verify-email?token=${token}`;
+
+  try {
+    await sendEmail({
+      to: email,
+      subject: "Verifikasi Email Anda - Capsule",
+      html: emailVerificationTemplate({
+        userName: name,
+        verificationLink,
+      }),
+    });
+  } catch (error) {
+    console.error("Failed to send verification email:", error);
+    // Don't fail the signup if email fails, user can request resend
+  }
+
+  // Ensure minimum loading time before redirect
+  const elapsed = Date.now() - startTime;
+  if (elapsed < MIN_LOADING_TIME) {
+    await new Promise(resolve => setTimeout(resolve, MIN_LOADING_TIME - elapsed));
+  }
+
+  redirect("/verify-email-sent");
 }
