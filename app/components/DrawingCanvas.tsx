@@ -26,13 +26,9 @@ const STORAGE_KEY = "drawing_canvas_state";
 const AUTO_SAVE_INTERVAL = 5000; // Save every 5 seconds
 
 export default function DrawingCanvas({
-  watermark,
   notes: externalNotes = "",
-  onNotesChange,
 }: {
-  watermark: string;
   notes?: string;
-  onNotesChange?: (notes: string) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -121,7 +117,7 @@ export default function DrawingCanvas({
     }
 
     setIsLoaded(true);
-  }, []);
+  }, [externalNotes]);
 
   // Auto-save state periodically
   useEffect(() => {
@@ -159,7 +155,7 @@ export default function DrawingCanvas({
         clearTimeout(autoSaveTimerRef.current);
       }
     };
-  }, [isDrawing, pages, currentPageIndex, selectedTool, selectedColor, penSize, canvasMode, notes, isLoaded]);
+  }, [isDrawing, pages, currentPageIndex, selectedTool, selectedColor, penSize, canvasMode, notes, isLoaded, externalNotes]);
 
   // Update canvas display when page changes
   useEffect(() => {
@@ -201,12 +197,14 @@ export default function DrawingCanvas({
     event.preventDefault();
 
     const cursor = point(event);
-    ctx.beginPath();
-    ctx.moveTo(cursor.x, cursor.y);
 
     if (selectedTool === "eraser") {
+      // For eraser, just clear the rect at cursor position
       ctx.clearRect(cursor.x - penSize / 2, cursor.y - penSize / 2, penSize, penSize);
     } else {
+      // For pen and highlighter, set up path
+      ctx.beginPath();
+      ctx.moveTo(cursor.x, cursor.y);
       ctx.lineWidth = selectedTool === "highlighter" ? penSize * 1.5 : penSize;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
@@ -233,9 +231,11 @@ export default function DrawingCanvas({
     event.preventDefault();
 
     const cursor = point(event);
+    const eraserSize = penSize;
 
     if (selectedTool === "eraser") {
-      ctx.clearRect(cursor.x - penSize / 2, cursor.y - penSize / 2, penSize, penSize);
+      // Clear with smooth circular eraser
+      ctx.clearRect(cursor.x - eraserSize / 2, cursor.y - eraserSize / 2, eraserSize, eraserSize);
     } else {
       ctx.lineTo(cursor.x, cursor.y);
       ctx.stroke();
@@ -248,6 +248,12 @@ export default function DrawingCanvas({
 
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    // Reset globalAlpha for next drawing
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.globalAlpha = 1;
+    }
 
     // Save current canvas state to pages array
     const updatedPages = [...pages];
@@ -369,7 +375,7 @@ export default function DrawingCanvas({
     >
       {/* Toolbar */}
       {showToolbar && (
-        <div className="drawing-toolbar bg-gray-100 border-b border-gray-300 p-3 sticky top-0 z-40">
+        <div className="drawing-toolbar bg-gray-100 border-b border-gray-300 p-3 sticky top-0 z-10">
           <div className="max-w-full overflow-x-auto">
             <div className="flex flex-wrap gap-3 items-center min-w-max">
               {/* Tool Selection */}

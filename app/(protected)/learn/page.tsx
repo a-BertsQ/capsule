@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import DrawingCanvas from "@/app/components/DrawingCanvas";
 
 const userFilters = [
@@ -25,6 +25,11 @@ export default function LearnPage() {
   });
   const [privacyOn, setPrivacyOn] = useState(false);
   const autoSaveTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+
+  const watermark = useMemo(() => {
+    return `${selectedFilter} • ${new Date().toLocaleDateString("id-ID")}`;
+  }, [selectedFilter]);
 
   // Auto-save notes to localStorage
   useEffect(() => {
@@ -35,6 +40,8 @@ export default function LearnPage() {
       try {
         if (notes) {
           localStorage.setItem(NOTES_STORAGE_KEY, notes);
+          setLastSaved(new Date());
+          console.log("Notes auto-saved successfully");
         }
       } catch (error) {
         console.error("Failed to save notes:", error);
@@ -62,10 +69,6 @@ export default function LearnPage() {
       document.removeEventListener("copy", block);
     };
   }, []);
-
-  const watermark = useMemo(() => {
-    return `${selectedFilter} • ${new Date().toLocaleDateString("id-ID")}`;
-  }, [selectedFilter]);
 
   return (
     <section className="app-grid page-section-fill">
@@ -110,6 +113,11 @@ export default function LearnPage() {
               className="field-textarea min-h-96"
               placeholder="Tulis ringkasan materi di sini..."
             />
+            {lastSaved && (
+              <p className="text-xs text-gray-600 mt-2">
+                💾 Tersimpan: {lastSaved.toLocaleTimeString("id-ID")}
+              </p>
+            )}
             <button
               onClick={() => {
                 const element = document.createElement("a");
@@ -127,7 +135,7 @@ export default function LearnPage() {
           </div>
           <div>
             <h3 className="font-semibold mb-2">Coretan & Gambar</h3>
-            <DrawingCanvas watermark={watermark} />
+            <DrawingCanvas notes={notes} />
           </div>
         </div>
       </section>
