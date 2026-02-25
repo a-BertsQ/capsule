@@ -36,7 +36,7 @@ export function SignInForm() {
   }
 
   return (
-    <form action={action} className="section-card">
+    <><form action={action} className="section-card">
       <label className="field-label" htmlFor="email">
         Email
       </label>
@@ -46,8 +46,7 @@ export function SignInForm() {
         type="email"
         required
         autoComplete="email"
-        className="field-input"
-      />
+        className="field-input" />
 
       <label className="field-label mt-4" htmlFor="password">
         Password
@@ -58,8 +57,7 @@ export function SignInForm() {
         type="password"
         required
         autoComplete="current-password"
-        className="field-input"
-      />
+        className="field-input" />
 
       <div className="mt-2 text-right">
         <Link href="/forgot-password" className="text-sm text-burgundy-medium hover:underline">
@@ -81,5 +79,14 @@ export function SignInForm() {
         Preview konten audio
       </Link>
     </form>
+    
+      {/*<div className="mt-4">
+        <a href="/api/auth/google" className="btn btn-outline w-full mt-2">
+          <Image src="/logo/google.svg" alt="Google" width={18} height={18} style={{ display: "inline-block", marginRight: 8 }} />
+          Masuk dengan Google
+        </a>
+      </div>*/}
+      
+    </>
   );
 }
