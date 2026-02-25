@@ -19,7 +19,7 @@ export default function HomePage() {
                 Pelajari konsep farmasi dengan materi interaktif dan dukungan tutor profesional.
               </p>
               <div className="hero-actions">
-                <Link href="/signup" className="btn btn-hero-primary btn-lg">
+                <Link href="/plans" className="btn btn-hero-primary btn-lg">
                   Mulai Belajar Sekarang
                 </Link>
                 <Link href="/signin" className="btn btn-hero-outline btn-lg">
@@ -38,10 +38,10 @@ export default function HomePage() {
                   priority
                 />
               </div>
-              <div className="hero-badge">
+              {/* <div className="hero-badge">
                 <span>🧪</span>
                 <span>Platform Farmasi</span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -117,8 +117,8 @@ export default function HomePage() {
                   <span>Update materi sesuai standar industri terkini</span>
                 </div>
               </div>
-              <Link href="/signup" className="btn btn-primary btn-lg">
-                Bergabung Sekarang
+              <Link href="/plans" className="btn btn-primary btn-lg">
+                Lihat Paket Kami
               </Link>
             </div>
             <div className="benefits-visual">
