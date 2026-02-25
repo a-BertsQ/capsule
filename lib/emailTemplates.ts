@@ -279,3 +279,285 @@ export function welcomeEmailTemplate(params: {
 </html>
   `;
 }
+
+// Payment success and plan upgrade template
+export function paymentSuccessTemplate(params: {
+  userName: string;
+  planName: string;
+  amountPaid: string;
+  invoiceNumber: string;
+  nextBillingDate: string;
+  dashboardLink: string;
+}) {
+  const { userName, planName, amountPaid, invoiceNumber, nextBillingDate, dashboardLink } = params;
+
+  return `
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pembayaran Berhasil - Capsule</title>
+  <style>${emailStyles}</style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="email-header">
+      <h1 class="email-logo">💊 Capsule</h1>
+    </div>
+    
+    <div class="email-body">
+      <h2 class="email-title">✅ Pembayaran Berhasil!</h2>
+      
+      <p class="email-text">
+        Halo ${userName},
+      </p>
+      
+      <p class="email-text">
+        Terima kasih! Pembayaran Anda telah berhasil diproses dan akun Anda telah di-upgrade ke plan <strong>${planName}</strong>.
+      </p>
+
+      <div class="code-box" style="background: linear-gradient(135deg, #F9F6F2 0%, #E8D8C4 100%); text-align: left; font-size: 14px; letter-spacing: 0;">
+        <p style="margin: 0 0 8px; color: #6D2932; font-size: 12px; font-weight: 600;">DETAIL PEMBAYARAN</p>
+        <p style="margin: 5px 0; color: #561C24; font-size: 14px;"><strong>Plan:</strong> ${planName}</p>
+        <p style="margin: 5px 0; color: #561C24; font-size: 14px;"><strong>Total Dibayar:</strong> ${amountPaid}</p>
+        <p style="margin: 5px 0; color: #561C24; font-size: 14px;"><strong>No. Invoice:</strong> ${invoiceNumber}</p>
+        <p style="margin: 5px 0; color: #561C24; font-size: 14px;"><strong>Billing Berikutnya:</strong> ${nextBillingDate}</p>
+      </div>
+      
+      <div style="text-align: center;">
+        <a href="${dashboardLink}" class="email-button">
+          Lihat Dashboard Saya
+        </a>
+      </div>
+      
+      <hr class="email-divider">
+      
+      <p class="email-text" style="font-size: 14px;">
+        Pembayaran akan diperpanjang otomatis pada tanggal <strong>${nextBillingDate}</strong>. Anda akan menerima email reminder 7 hari sebelum tanggal perpanjangan.
+      </p>
+    </div>
+    
+    <div class="email-footer">
+      <p style="margin: 0 0 10px;">© ${new Date().getFullYear()} Capsule — Platform E-Learning Farmasi</p>
+      <p style="margin: 0; color: #C7B7A3;">Built for learning</p>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+}
+
+// Outstanding payment reminder template
+export function outstandingPaymentTemplate(params: {
+  userName: string;
+  planName: string;
+  amountDue: string;
+  dueDate: string;
+  invoiceNumber: string;
+  paymentLink: string;
+}) {
+  const { userName, planName, amountDue, dueDate, invoiceNumber, paymentLink } = params;
+
+  return `
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reminder Pembayaran - Capsule</title>
+  <style>${emailStyles}</style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="email-header" style="background: linear-gradient(135deg, #b45309 0%, #d97706 100%);">
+      <h1 class="email-logo">💊 Capsule</h1>
+    </div>
+    
+    <div class="email-body">
+      <h2 class="email-title">⚠️ Pembayaran Belum Terselesaikan</h2>
+      
+      <p class="email-text">
+        Halo ${userName},
+      </p>
+      
+      <p class="email-text">
+        Kami mendeteksi ada pembayaran yang belum diselesaikan untuk plan <strong>${planName}</strong> Anda.
+      </p>
+
+      <div class="code-box" style="background: rgba(180, 83, 9, 0.1); border-color: #d97706; text-align: left; font-size: 14px; letter-spacing: 0;">
+        <p style="margin: 0 0 8px; color: #b45309; font-size: 12px; font-weight: 600;">DETAIL TAGIHAN</p>
+        <p style="margin: 5px 0; color: #561C24; font-size: 14px;"><strong>Plan:</strong> ${planName}</p>
+        <p style="margin: 5px 0; color: #561C24; font-size: 14px;"><strong>Total Tagihan:</strong> ${amountDue}</p>
+        <p style="margin: 5px 0; color: #561C24; font-size: 14px;"><strong>No. Invoice:</strong> ${invoiceNumber}</p>
+        <p style="margin: 5px 0; color: #b45309; font-size: 14px;"><strong>Jatuh Tempo:</strong> ${dueDate}</p>
+      </div>
+      
+      <p class="email-text">
+        Silakan selesaikan pembayaran sebelum tanggal jatuh tempo untuk menghindari gangguan layanan.
+      </p>
+      
+      <div style="text-align: center;">
+        <a href="${paymentLink}" class="email-button" style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); color: white;">
+          Bayar Sekarang
+        </a>
+      </div>
+      
+      <hr class="email-divider">
+      
+      <p class="email-text" style="font-size: 13px; color: #6D2932;">
+        Jika Anda memiliki pertanyaan tentang tagihan ini, silakan hubungi tim support kami.
+      </p>
+    </div>
+    
+    <div class="email-footer">
+      <p style="margin: 0 0 10px;">© ${new Date().getFullYear()} Capsule — Platform E-Learning Farmasi</p>
+      <p style="margin: 0; color: #C7B7A3;">Built for learning</p>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+}
+
+// Subscription expiring soon template
+export function subscriptionExpiringTemplate(params: {
+  userName: string;
+  planName: string;
+  expiryDate: string;
+  daysRemaining: number;
+  renewalLink: string;
+}) {
+  const { userName, planName, expiryDate, daysRemaining, renewalLink } = params;
+
+  return `
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Langganan Akan Berakhir - Capsule</title>
+  <style>${emailStyles}</style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="email-header">
+      <h1 class="email-logo">💊 Capsule</h1>
+    </div>
+    
+    <div class="email-body">
+      <h2 class="email-title">⏰ Langganan Anda Akan Berakhir</h2>
+      
+      <p class="email-text">
+        Halo ${userName},
+      </p>
+      
+      <p class="email-text">
+        Langganan <strong>${planName}</strong> Anda akan berakhir dalam <strong>${daysRemaining} hari</strong> pada tanggal <strong>${expiryDate}</strong>.
+      </p>
+
+      <div class="code-box" style="background: rgba(180, 83, 9, 0.05); border-color: #C7B7A3;">
+        <p style="margin: 0; font-size: 36px; color: #b45309;">${daysRemaining}</p>
+        <p style="margin: 8px 0 0; font-size: 14px; color: #6D2932; letter-spacing: 0;">hari tersisa</p>
+      </div>
+      
+      <p class="email-text">
+        Untuk melanjutkan akses ke semua fitur premium, silakan perpanjang langganan Anda sekarang.
+      </p>
+      
+      <div style="text-align: center;">
+        <a href="${renewalLink}" class="email-button">
+          Perpanjang Langganan
+        </a>
+      </div>
+      
+      <hr class="email-divider">
+      
+      <p class="email-text" style="font-size: 13px; color: #6D2932;">
+        <strong>Apa yang terjadi jika tidak diperpanjang?</strong><br>
+        Jika langganan tidak diperpanjang sebelum tanggal ${expiryDate}, akun Anda akan otomatis diturunkan ke <strong>Free Plan</strong> dan Anda akan kehilangan akses ke fitur premium.
+      </p>
+    </div>
+    
+    <div class="email-footer">
+      <p style="margin: 0 0 10px;">© ${new Date().getFullYear()} Capsule — Platform E-Learning Farmasi</p>
+      <p style="margin: 0; color: #C7B7A3;">Built for learning</p>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+}
+
+// Subscription downgraded to free plan template
+export function subscriptionDowngradedTemplate(params: {
+  userName: string;
+  previousPlan: string;
+  dashboardLink: string;
+}) {
+  const { userName, previousPlan, dashboardLink } = params;
+
+  return `
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akun Diturunkan ke Free Plan - Capsule</title>
+  <style>${emailStyles}</style>
+</head>
+<body>
+  <div class="email-wrapper">
+    <div class="email-header" style="background: linear-gradient(135deg, #6D2932 0%, #561C24 100%);">
+      <h1 class="email-logo">💊 Capsule</h1>
+    </div>
+    
+    <div class="email-body">
+      <h2 class="email-title">📋 Langganan Diturunkan ke Free Plan</h2>
+      
+      <p class="email-text">
+        Halo ${userName},
+      </p>
+      
+      <p class="email-text">
+        Langganan <strong>${previousPlan}</strong> Anda telah berakhir dan tidak diperpanjang. Akun Anda sekarang menggunakan <strong>Free Plan</strong>.
+      </p>
+
+      <div class="code-box" style="background: #F9F6F2; text-align: left; font-size: 14px; letter-spacing: 0;">
+        <p style="margin: 0 0 12px; color: #561C24; font-size: 16px; font-weight: 700;">Yang Masih Bisa Anda Akses:</p>
+        <p style="margin: 5px 0; color: #6D2932; font-size: 14px;">✓ Materi dasar farmasi</p>
+        <p style="margin: 5px 0; color: #6D2932; font-size: 14px;">✓ Forum komunitas</p>
+        <p style="margin: 5px 0; color: #6D2932; font-size: 14px;">✓ Artikel dan blog</p>
+        <hr style="border: none; border-top: 1px solid #C7B7A3; margin: 12px 0;">
+        <p style="margin: 5px 0; color: #b91c1c; font-size: 14px;">✗ Akses materi premium</p>
+        <p style="margin: 5px 0; color: #b91c1c; font-size: 14px;">✗ Sesi tutor private</p>
+        <p style="margin: 5px 0; color: #b91c1c; font-size: 14px;">✗ Sertifikat digital</p>
+      </div>
+      
+      <p class="email-text">
+        Ingin kembali ke plan premium? Upgrade kapan saja untuk mendapatkan akses penuh ke semua fitur!
+      </p>
+      
+      <div style="text-align: center;">
+        <a href="${dashboardLink}" class="email-button">
+          Lihat Pilihan Plan
+        </a>
+      </div>
+      
+      <hr class="email-divider">
+      
+      <p class="email-text" style="font-size: 13px; color: #6D2932;">
+        Terima kasih telah menggunakan Capsule. Kami senang bisa membantu perjalanan belajar farmasi Anda! 🙏
+      </p>
+    </div>
+    
+    <div class="email-footer">
+      <p style="margin: 0 0 10px;">© ${new Date().getFullYear()} Capsule — Platform E-Learning Farmasi</p>
+      <p style="margin: 0; color: #C7B7A3;">Built for learning</p>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+}
+

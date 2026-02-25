@@ -25,13 +25,21 @@ interface Session {
   isCurrent: boolean;
 }
 
-export default function ProfileTabs({ user, sessions }: { user: User; sessions: Session[] }) {
-  const [activeTab, setActiveTab] = useState<"account" | "security" | "sessions" | "info">("account");
+interface Tab {
+  id: string;
+  title: string;
+  isLink?: boolean;
+  href?: string;
+}
 
-  const tabs = [
+export default function ProfileTabs({ user, sessions }: { user: User; sessions: Session[] }) {
+  const [activeTab, setActiveTab] = useState<"account" | "security" | "sessions" | "plans" | "info">("account");
+
+  const tabs: Tab[] = [
     { id: "account", title: "Akun" },
     { id: "security", title: "Keamanan" },
     { id: "sessions", title: "Perangkat Aktif" },
+    { id: "plans", title: "Langganan", isLink: true, href: "/subscription" },
     { id: "info", title: "Informasi Akun" },
   ];
 
@@ -46,18 +54,31 @@ export default function ProfileTabs({ user, sessions }: { user: User; sessions: 
         </div>
 
         <nav className="sidebar-nav">
-          {tabs.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id as "account" | "security" | "sessions" | "info")}
-              className={classNames(
-                "sidebar-link",
-                activeTab === t.id ? "active" : ""
-              )}
-            >
-              {t.title}
-            </button>
-          ))}
+          {tabs.map((t) => {
+            if (t.isLink && t.href) {
+              return (
+                <a
+                  key={t.id}
+                  href={t.href}
+                  className="sidebar-link"
+                >
+                  {t.title}
+                </a>
+              );
+            }
+            return (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id as "account" | "security" | "sessions" | "plans" | "info")}
+                className={classNames(
+                  "sidebar-link",
+                  activeTab === t.id ? "active" : ""
+                )}
+              >
+                {t.title}
+              </button>
+            );
+          })}
         </nav>
       </div>
 

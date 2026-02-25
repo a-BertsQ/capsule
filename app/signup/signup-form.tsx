@@ -17,7 +17,7 @@ function passwordStrength(pw: string) {
   return score;
 }
 
-export function SignUpForm() {
+export function SignUpForm({ selectedPlan }: { selectedPlan?: string }) {
   const [state, action, pending] = useActionState(signUpAction, initial);
   const [clientError, setClientError] = useState("");
   const [strength, setStrength] = useState(0);
@@ -66,6 +66,8 @@ export function SignUpForm() {
     >
       <label className="field-label" htmlFor="name">Name</label>
       <input id="name" name="name" className="field-input" />
+
+      <input type="hidden" name="plan" value={selectedPlan || "free"} />
 
       <label className="field-label mt-4" htmlFor="email">Email</label>
       <input id="email" name="email" type="email" required className="field-input" />

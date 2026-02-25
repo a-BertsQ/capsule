@@ -14,6 +14,13 @@ model User {
   googleId          String?   @unique
   password          String?   // hashed password
   role              String    @default("student")
+  planId            Int?      // Current user plan
+  plan              Plan?     @relation(fields: [planId], references: [id])
+  subscriptionStatus String?  @default("active") // active, expiring, cancelled, suspended
+  subscriptionStartedAt DateTime?
+  subscriptionExpiresAt DateTime?
+  lastBillingDate   DateTime?
+  nextBillingDate   DateTime?
   isEmailVerified   Boolean   @default(false)
   emailVerified     DateTime?
   createdAt         DateTime  @default(now())
@@ -22,6 +29,8 @@ model User {
   bookings          TutorBooking[]
   verificationTokens VerificationToken[]
   passwordResetTokens PasswordResetToken[]
+  payments          Payment[]
+  invoices          Invoice[]
 }
 
 model Session {
@@ -35,12 +44,18 @@ model Session {
 }
 
 model Plan {
-  id         Int      @id @default(autoincrement())
-  name       String
-  priceCents Int      @default(0)
-  interval   String   @default("monthly")
-  features   Json?
-  createdAt  DateTime @default(now())
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  slug        String    @unique
+  priceCents  Int       @default(0)
+  interval    String    @default("monthly")
+  features    Json?
+  description String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  users       User[]
+  payments    Payment[]
+  invoices    Invoice[]
 }
 
 model Course {
@@ -87,4 +102,49 @@ model PasswordResetToken {
   
   @@index([token])
   @@index([userId])
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  plan            Plan     @relation(fields: [planId], references: [id])
+  planId          Int
+  amountCents     Int
+  status          String   @default("pending") // pending, completed, failed, expired
+  paymentMethod   String?  // credit_card, bank_transfer, e-wallet, qris
+  paymentGateway  String?  // midtrans, xendit, manual
+  externalId      String?  @unique // ID from payment gateway
+  externalUrl     String?  // Payment URL from gateway
+  paidAt          DateTime?
+  expiredAt       DateTime?
+  metadata        Json?    // Store additional payment data
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  invoices        Invoice[]
+  
+  @@index([userId])
+  @@index([status])
+  @@index([externalId])
+}
+
+model Invoice {
+  id              String   @id @default(cuid())
+  invoiceNumber   String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+  payment         Payment? @relation(fields: [paymentId], references: [id])
+  paymentId       String?
+  plan            Plan     @relation(fields: [planId], references: [id])
+  planId          Int
+  amountCents     Int
+  status          String   @default("unpaid") // unpaid, paid, cancelled
+  dueDate         DateTime
+  paidAt          DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([invoiceNumber])
+  @@index([status])
 }

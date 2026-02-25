@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
@@ -28,7 +26,6 @@ export function MobileMenu({ authenticated }: { authenticated: boolean }) {
             <>
               <Link href="/dashboard" onClick={() => setOpen(false)}>Dashboard</Link>
               <Link href="/learn" onClick={() => setOpen(false)}>Learn</Link>
-              <Link href="/plans" onClick={() => setOpen(false)}>Plans</Link>
               <Link href="/tutor" onClick={() => setOpen(false)}>Tutor</Link>
             </>
           ) : (

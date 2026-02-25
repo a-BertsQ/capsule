@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/payment/verify",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/subscription/check-expiry",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}

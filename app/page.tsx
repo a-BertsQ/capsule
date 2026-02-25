@@ -19,10 +19,10 @@ export default function HomePage() {
                 Pelajari konsep farmasi dengan materi interaktif dan dukungan tutor profesional.
               </p>
               <div className="hero-actions">
-                <Link href="/signup" className="btn btn-primary btn-lg">
+                <Link href="/signup" className="btn btn-hero-primary btn-lg">
                   Mulai Belajar Sekarang
                 </Link>
-                <Link href="/signin" className="btn btn-outline btn-lg">
+                <Link href="/signin" className="btn btn-hero-outline btn-lg">
                   Masuk
                 </Link>
               </div>

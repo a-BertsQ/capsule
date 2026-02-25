@@ -12,7 +12,7 @@ const cards = [
   {
     title: "Langganan",
     text: "Pilih paket Full Access, Selected, atau Free sesuai kebutuhan belajar.",
-    href: "/plans",
+    href: "/subscription",
   },
   {
     title: "Tutor Meeting",

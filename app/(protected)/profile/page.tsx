@@ -19,6 +19,8 @@ export default async function ProfilePage() {
   const normalizedUser = {
     ...user,
     name: user.name ?? undefined,
+    createdAt: user.createdAt.toISOString(),
+    updatedAt: user.updatedAt.toISOString(),
   };
 
   return (

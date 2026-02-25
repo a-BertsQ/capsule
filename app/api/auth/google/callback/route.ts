@@ -60,7 +60,10 @@ export async function GET(req: Request) {
       await prisma.user.update({ where: { id: user.id }, data: { googleId, isEmailVerified: true, emailVerified: new Date() } });
     }
   } else {
-    // create a new user linked to Google
+    // Get free plan for new users
+    const freePlan = await prisma.plan.findUnique({ where: { slug: "free" } });
+
+    // create a new user linked to Google with free plan
     user = await prisma.user.create({
       data: {
         email,
@@ -68,6 +71,7 @@ export async function GET(req: Request) {
         googleId,
         isEmailVerified: true,
         emailVerified: new Date(),
+        planId: freePlan?.id,
       },
     });
   }

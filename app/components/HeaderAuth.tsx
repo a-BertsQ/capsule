@@ -31,7 +31,6 @@ export default function HeaderAuth({ user }: { user: { name?: string | null; ema
           <nav className="site-nav desktop-nav">
             <Link href="/dashboard" className="nav-link">Dashboard</Link>
             <Link href="/learn" className="nav-link">Learn</Link>
-            <Link href="/plans" className="nav-link">Plans</Link>
             <Link href="/tutor" className="nav-link">Tutor</Link>
           </nav>
 

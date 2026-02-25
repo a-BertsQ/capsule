@@ -20,6 +20,7 @@ export async function signUpAction(
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
   const name = String(formData.get("name") ?? "").trim();
+  const planSlug = String(formData.get("plan") ?? "free").trim();
 
   if (!email || !password) {
     return { message: "Email dan password wajib diisi." };
@@ -43,14 +44,21 @@ export async function signUpAction(
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) return { message: "Email sudah digunakan." };
 
+  // Get plan by slug
+  const plan = await prisma.plan.findUnique({ where: { slug: planSlug } });
+  if (!plan) {
+    return { message: "Paket tidak ditemukan." };
+  }
+
   const hash = await bcrypt.hash(password, 10);
   
-  // Create user with unverified email
+  // Create user with unverified email and assigned plan
   const user = await prisma.user.create({
     data: {
       email,
       password: hash,
       name,
+      planId: plan.id,
     },
   });
 
